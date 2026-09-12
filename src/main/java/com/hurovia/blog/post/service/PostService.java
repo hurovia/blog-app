@@ -2,12 +2,13 @@ package com.hurovia.blog.post.service;
 
 import com.hurovia.blog.post.dto.CreatePostRequest;
 import com.hurovia.blog.post.dto.CreatePostResponse;
+import com.hurovia.blog.post.dto.PostResponse;
 import com.hurovia.blog.post.entity.Post;
 import com.hurovia.blog.post.mapper.PostMapper;
 import com.hurovia.blog.post.repository.PostRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -27,16 +28,16 @@ public class PostService {
         return createPostMapper.toCreatePostResponseDTO(savedPost);
     }
 
-    public List<Post> findAll() {
-        return postRepository.findAll();
+    public List<PostResponse> findAll() {
+        return createPostMapper.toPostResponseDTO(postRepository.findAll());
     }
-    public Post findById(Long id) {
-        return postRepository.findById(id).orElse(null);
+    public PostResponse findById(Long postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        return createPostMapper.toPostResponseDTO(post);
     }
-    public Post update(Post post) {
-        return postRepository.save(post);
-    }
-    public void deleteById(Long id) {
-        postRepository.deleteById(id);
+
+    public List<PostResponse> findByPage(int page, int pageSize) {
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        return createPostMapper.toPostResponseDTO(postRepository.findAll(pageRequest).getContent());
     }
 }

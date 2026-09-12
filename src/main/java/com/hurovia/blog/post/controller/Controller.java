@@ -1,10 +1,7 @@
 package com.hurovia.blog.post.controller;
 
-import com.hurovia.blog.exception.PostNotFoundException;
 import com.hurovia.blog.post.dto.*;
-import com.hurovia.blog.post.entity.Post;
 import com.hurovia.blog.post.service.PostService;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

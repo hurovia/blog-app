@@ -1,23 +1,32 @@
 package com.hurovia.blog.post.service;
 
+import com.hurovia.blog.post.dto.CreatePostRequest;
+import com.hurovia.blog.post.dto.CreatePostResponse;
 import com.hurovia.blog.post.entity.Post;
+import com.hurovia.blog.post.mapper.PostMapper;
 import com.hurovia.blog.post.repository.PostRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
 public class PostService {
-    private final PostRepository postRepository;
 
-    @Autowired
-    public PostService(PostRepository postRepository) {
+    private final PostRepository postRepository;
+    private final PostMapper createPostMapper;
+
+    public PostService(PostRepository postRepository, PostMapper createPostMapper) {
         this.postRepository = postRepository;
+        this.createPostMapper = createPostMapper;
     }
-    public Post save(Post post) {
-        return postRepository.save(post);
+
+    public CreatePostResponse save(CreatePostRequest createPostRequest) {
+        Post post = createPostMapper.toEntity(createPostRequest);
+        Post savedPost = postRepository.save(post);
+        return createPostMapper.toCreatePostResponseDTO(savedPost);
     }
+
     public List<Post> findAll() {
         return postRepository.findAll();
     }

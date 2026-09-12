@@ -1,6 +1,7 @@
 package com.hurovia.blog.post.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
@@ -39,10 +40,28 @@ public class Post {
     @Column(name = "post_title", nullable = false)
     private String title;
 
+    public Post(){
+
+    }
+
+    public Post(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
     @Lob
     @Column(name = "post_content", columnDefinition = "MEDIUMTEXT")
     private String content;
 
+    public Instant getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Instant createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    @CreationTimestamp
     @Column(name = "time_posted", updatable = false, nullable = false)
     private Instant createdDate;
 }

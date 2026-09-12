@@ -1,15 +1,23 @@
 package com.hurovia.blog.post.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.hurovia.blog.post.dto.CreatePostRequest;
+import com.hurovia.blog.post.dto.CreatePostResponse;
+import com.hurovia.blog.post.service.PostService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/api")
 public class Controller {
 
-    @GetMapping("/greet")
-    public String greetUser(){
-        return "Hello! User";
+    private final PostService postService;
+
+    public Controller(PostService postService) {
+        this.postService = postService;
+    }
+
+    @PostMapping("/createpost")
+    public CreatePostResponse createPost(@RequestBody CreatePostRequest createPostRequest){
+        return postService.save(createPostRequest);
     }
 }

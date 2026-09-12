@@ -1,4 +1,7 @@
 package com.hurovia.blog.post.dto;
 
-public class PageResponse {
-}
+import java.util.List;
+
+public record PageResponse(
+        List<CreatePostResponse> posts
+){}

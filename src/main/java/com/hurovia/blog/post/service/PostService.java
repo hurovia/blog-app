@@ -1,5 +1,7 @@
 package com.hurovia.blog.post.service;
 
+import com.hurovia.blog.exception.PersistenceException;
+import com.hurovia.blog.exception.PostNotFoundException;
 import com.hurovia.blog.post.dto.CreatePostRequest;
 import com.hurovia.blog.post.dto.CreatePostResponse;
 import com.hurovia.blog.post.dto.PostResponse;
@@ -23,21 +25,38 @@ public class PostService {
     }
 
     public CreatePostResponse save(CreatePostRequest createPostRequest) {
-        Post post = createPostMapper.toEntity(createPostRequest);
-        Post savedPost = postRepository.save(post);
-        return createPostMapper.toCreatePostResponseDTO(savedPost);
+        try {
+            Post post = createPostMapper.toEntity(createPostRequest);
+            Post savedPost = postRepository.save(post);
+            return createPostMapper.toCreatePostResponseDTO(savedPost);
+        } catch (Exception e) {
+            throw new PersistenceException("FAILED TO SAVE POST");
+        }
     }
 
     public List<PostResponse> findAll() {
-        return createPostMapper.toPostResponseDTO(postRepository.findAll());
+        try {
+            return createPostMapper.toPostResponseDTO(postRepository.findAll());
+        } catch (Exception e) {
+            throw new PersistenceException("FAILED TO FIND ALL POSTS");
+        }
     }
     public PostResponse findById(Long postId) {
-        Post post = postRepository.findById(postId).orElse(null);
-        return createPostMapper.toPostResponseDTO(post);
+        try {
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(() -> new PostNotFoundException("POST ID: "+postId+", NOT FOUND"));
+            return createPostMapper.toPostResponseDTO(post);
+        } catch (PostNotFoundException e) {
+            throw new PersistenceException("FAILED TO FIND POST");
+        }
     }
 
     public List<PostResponse> findByPage(int page, int pageSize) {
-        PageRequest pageRequest = PageRequest.of(page, pageSize);
-        return createPostMapper.toPostResponseDTO(postRepository.findAll(pageRequest).getContent());
+        try {
+            PageRequest pageRequest = PageRequest.of(page, pageSize);
+            return createPostMapper.toPostResponseDTO(postRepository.findAll(pageRequest).getContent());
+        } catch (Exception e) {
+            throw new  PersistenceException("UNABLE TO FIND POSTS");
+        }
     }
 }

@@ -24,6 +24,8 @@ public class PostService {
         this.createPostMapper = createPostMapper;
     }
 
+
+//    save() tries to persist post data to database
     public CreatePostResponse save(CreatePostRequest createPostRequest) {
         try {
             Post post = createPostMapper.toEntity(createPostRequest);
@@ -34,29 +36,30 @@ public class PostService {
         }
     }
 
+//  findAll() tries to fetch all posts from database
+//  TODO: Remove this method predeployment
     public List<PostResponse> findAll() {
         try {
             return createPostMapper.toPostResponseDTO(postRepository.findAll());
         } catch (Exception e) {
-            throw new PersistenceException("FAILED TO FIND ALL POSTS");
-        }
-    }
-    public PostResponse findById(Long postId) {
-        try {
-            Post post = postRepository.findById(postId)
-                    .orElseThrow(() -> new PostNotFoundException("POST ID: "+postId+", NOT FOUND"));
-            return createPostMapper.toPostResponseDTO(post);
-        } catch (PostNotFoundException e) {
-            throw new PersistenceException("FAILED TO FIND POST");
+            throw new PersistenceException("FAILED TO FETCH ALL POSTS");
         }
     }
 
+//  findById() will fetch post based on postId
+    public PostResponse findById(Long postId) {
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(() -> new PostNotFoundException("POST ID: "+postId+", NOT FOUND"));
+            return createPostMapper.toPostResponseDTO(post);
+    }
+
+//  findByPage() will fetch posts based on page size and page number
     public List<PostResponse> findByPage(int page, int pageSize) {
         try {
             PageRequest pageRequest = PageRequest.of(page, pageSize);
             return createPostMapper.toPostResponseDTO(postRepository.findAll(pageRequest).getContent());
         } catch (Exception e) {
-            throw new  PersistenceException("UNABLE TO FIND POSTS");
+            throw new  PersistenceException("UNABLE TO FETCH POSTS");
         }
     }
 }

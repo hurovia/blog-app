@@ -15,21 +15,31 @@ public class LoggingAspect {
 
     private static final Logger log = LoggerFactory.getLogger(LoggingAspect.class);
     @Before("execution(* com.hurovia.blog.post.controller.Controller.*(..))")
-    public void logBefore(JoinPoint joinPoint) {
+    public void logBeforeController(JoinPoint joinPoint) {
         log.info("entering method: {}",joinPoint.getSignature().getName());
     }
 
     @After("execution(* com.hurovia.blog.post.controller.*(..))")
-    public void logAfter(JoinPoint joinPoint) {
+    public void logAfterController(JoinPoint joinPoint) {
         log.info("exiting method: {}",joinPoint.getSignature().getName());
     }
 
+    @Before("execution(* com.hurovia.blog.post.service.PostService.*(..))")
+    public void logBeforeService(JoinPoint jointPoint){
+        log.info("entering method {}",jointPoint.getSignature().getName());
+    }
+
+    @After("execution(* com.hurovia.blog.post.service.PostService.*(..))")
+    public void logAfterService(JoinPoint joinPoint){
+        log.info("exiting method {}",joinPoint.getSignature().getName());
+    }
+
     @AfterThrowing(
-        pointcut = "execution(* com.hurovia.blog.post.service.*.*(..))",
-            throwing = "ex"
+        pointcut = "execution(* com.hurovia.blog.post.service.PostService.*(..))",
+            throwing = "serviceException"
     )
-    public void handleException(Exception ex) {
-        log.error("Encountered Exception: {}",ex.getMessage());
+    public void handleException(Exception serviceException) {
+        log.error("Encountered Exception: {}",serviceException.getMessage());
     }
 
 }

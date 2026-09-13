@@ -1,12 +1,12 @@
 package com.hurovia.blog.post.controller;
 
+import com.hurovia.blog.exception.InvalidInputException;
 import com.hurovia.blog.post.dto.*;
 import com.hurovia.blog.post.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -31,15 +31,20 @@ public class Controller {
         return new ResponseEntity<>(postResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/allposts")
+//  TODO: This endpoint to fetch all posts will be removed predeployment
+    @GetMapping("/findposts")
     public ResponseEntity<List<PostResponse>> allPosts(){
         List<PostResponse> postResponseList = postService.findAll();
         return new ResponseEntity<>(postResponseList, HttpStatus.OK);
     }
 
-    @GetMapping("/findposts")
-    public ResponseEntity<List<PostResponse>> findPosts(@RequestParam Integer page, @RequestParam Integer size){
-        List<PostResponse> postResponseList = postService.findByPage(page, size);
+//  will hide the page and size from the URL if required in future
+    @GetMapping("/findposts/{page}/{size}")
+    public ResponseEntity<List<PostResponse>> findPosts(@PathVariable Integer page, @PathVariable Integer size){
+        List<PostResponse> postResponseList = postService.findByPage(page-1, size);
+        if(postResponseList.isEmpty()){
+            throw new InvalidInputException("NO POSTS FOUND IN THIS PAGE");
+        }
         return new ResponseEntity<>(postResponseList, HttpStatus.OK);
     }
 }

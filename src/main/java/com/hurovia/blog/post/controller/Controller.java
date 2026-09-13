@@ -47,4 +47,10 @@ public class Controller {
         }
         return new ResponseEntity<>(postResponseList, HttpStatus.OK);
     }
+
+    @GetMapping("/findAndSort")
+    public ResponseEntity<List<PostResponse>> findAndSortByPage(@RequestBody GetPageRequest getPageRequest){
+        List<PostResponse> postResponseList = postService.findAndSortByPage(getPageRequest);
+        return new ResponseEntity<>(postResponseList, HttpStatus.OK);
+    }
 }

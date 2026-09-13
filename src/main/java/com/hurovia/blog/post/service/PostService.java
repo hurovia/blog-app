@@ -4,11 +4,13 @@ import com.hurovia.blog.exception.PersistenceException;
 import com.hurovia.blog.exception.PostNotFoundException;
 import com.hurovia.blog.post.dto.CreatePostRequest;
 import com.hurovia.blog.post.dto.CreatePostResponse;
+import com.hurovia.blog.post.dto.GetPageRequest;
 import com.hurovia.blog.post.dto.PostResponse;
 import com.hurovia.blog.post.entity.Post;
 import com.hurovia.blog.post.mapper.PostMapper;
 import com.hurovia.blog.post.repository.PostRepository;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,6 +62,17 @@ public class PostService {
             return createPostMapper.toPostResponseDTO(postRepository.findAll(pageRequest).getContent());
         } catch (Exception e) {
             throw new  PersistenceException("UNABLE TO FETCH POSTS");
+        }
+    }
+
+//    findByPageAndSort() method will sort based on field along with functionality by findByPage()
+    public List<PostResponse> findAndSortByPage(GetPageRequest getPageRequest){
+        try {
+            Sort sort = getPageRequest.sortTo()?Sort.by(getPageRequest.field()).ascending():Sort.by(getPageRequest.field()).descending();
+            PageRequest pageRequest = PageRequest.of(getPageRequest.page()-1, getPageRequest.size(), sort);
+            return createPostMapper.toPostResponseDTO(postRepository.findAll(pageRequest).getContent());
+        }catch (Exception e){
+            throw new PersistenceException("UNABLE TO FETCH AND SORT POSTS");
         }
     }
 }
